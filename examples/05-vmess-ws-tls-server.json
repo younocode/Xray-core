@@ -1,0 +1,71 @@
+{
+  "log": {
+    "loglevel": "warning"
+  },
+  "inbounds": [
+    {
+      "port": 443,
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "839f7ddb-bdf0-4e60-8d27-17e3c3ae4b3d",
+            "alterId": 0,
+            "level": 0,
+            "email": "user@example.com"
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "wsSettings": {
+          "path": "/vmess-ws",
+          "headers": {
+            "Host": "your-domain.com"
+          }
+        },
+        "tlsSettings": {
+          "serverName": "your-domain.com",
+          "certificates": [
+            {
+              "certificateFile": "/path/to/fullchain.pem",
+              "keyFile": "/path/to/privkey.pem"
+            }
+          ],
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ]
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    },
+    {
+      "protocol": "blackhole",
+      "tag": "block",
+      "settings": {}
+    }
+  ],
+  "routing": {
+    "domainStrategy": "AsIs",
+    "rules": [
+      {
+        "type": "field",
+        "ip": [
+          "geoip:private"
+        ],
+        "outboundTag": "block"
+      }
+    ]
+  }
+}

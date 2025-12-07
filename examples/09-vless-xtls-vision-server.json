@@ -1,0 +1,78 @@
+{
+  "log": {
+    "loglevel": "warning"
+  },
+  "inbounds": [
+    {
+      "port": 443,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "ffc677c5-0ac8-4ce1-8413-c2daf5a7fedb",
+            "flow": "xtls-rprx-vision",
+            "level": 0,
+            "email": "user@example.com"
+          }
+        ],
+        "decryption": "none",
+        "fallbacks": [
+          {
+            "dest": 80,
+            "xver": 1
+          },
+          {
+            "path": "/websocket",
+            "dest": "@vless-ws",
+            "xver": 1
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "your-domain.com",
+          "certificates": [
+            {
+              "certificateFile": "/path/to/fullchain.pem",
+              "keyFile": "/path/to/privkey.pem"
+            }
+          ],
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ],
+          "minVersion": "1.2"
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls", "quic"]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    },
+    {
+      "protocol": "blackhole",
+      "tag": "block",
+      "settings": {}
+    }
+  ],
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [
+      {
+        "type": "field",
+        "ip": [
+          "geoip:private"
+        ],
+        "outboundTag": "block"
+      }
+    ]
+  }
+}
